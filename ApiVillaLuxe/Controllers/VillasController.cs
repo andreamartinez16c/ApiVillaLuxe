@@ -23,15 +23,9 @@ namespace ApiVillaLuxe.Controllers
             return await this.repo.GetVillasUnicasAsync();
         }
 
-        [HttpGet("villasunicas/{provincia}")]
-        public async Task<ActionResult<List<Villa>>> GetVillasUnicasProvincia(string provincia)
-        {
-            return await this.repo.GetVillasByProvinciaAsync(provincia);
-        }
-
         [HttpGet]
         [Route("{idvilla}")]
-        public async Task<ActionResult<VillaFechasResevadas>> DetallesVilla(int idvilla)    
+        public async Task<ActionResult<VillaFechasResevadas>> DetallesVilla(int idvilla)
         {
             VillaFechasResevadas fechasReservadas = new VillaFechasResevadas();
             fechasReservadas.FechasReservadas = await this.repo.GetFechasReservadasByIdVillaAsync(idvilla);
@@ -59,10 +53,9 @@ namespace ApiVillaLuxe.Controllers
         [HttpPost("insertreserva")]
         public async Task<ActionResult> CreateReserva(Reserva reserva)
         {
-            int idusuario = 1;
             try
             {
-                await repo.CreateReserva(reserva, idusuario);
+                await repo.CreateReserva(reserva, reserva.IdUsuario);
                 return Ok("Reserva creada exitosamente");
             }
             catch (Exception ex)
@@ -131,7 +124,7 @@ namespace ApiVillaLuxe.Controllers
             var misReservas = await this.repo.GetMisReservas(idUsuario);
             if (misReservas == null || misReservas.Count == 0)
             {
-                return NotFound();
+                return null;
             }
             return Ok(misReservas);
         }
@@ -212,11 +205,32 @@ namespace ApiVillaLuxe.Controllers
             return imagen;
         }
 
+        [HttpGet("imagen/{imagen}/{idvilla}")]
+        public async Task<ActionResult<Imagen>> GetImagen(string imagen, int idvilla)
+        {
+            var img = await repo.FindImagenVillaNombre(imagen, idvilla);
+
+            if (img == null)
+            {
+                return NotFound();
+            }
+
+            return img;
+        }
+
         // DELETE: api/imagenes/5
         [HttpDelete("imagen/{idimagen}")]
         public async Task<ActionResult> DeleteImagen(int idimagen)
         {
             await repo.DeleteImagenes(idimagen);
+
+            return NoContent();
+        }
+
+        [HttpDelete("imagen/{imagen}/{idvilla}")]
+        public async Task<ActionResult> DeleteImagenName(string imagen, int idvilla)
+        {
+            await repo.DeleteImagenesName(imagen, idvilla);
 
             return NoContent();
         }

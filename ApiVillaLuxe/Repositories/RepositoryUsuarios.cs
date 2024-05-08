@@ -25,22 +25,16 @@ namespace ApiVillaLuxe.Repositories
             }
         }
 
-        public async Task RegisterUser(string nombre, string email
-            , string password, string telefono, int idrol)
+        public async Task<Usuario> RegisterUser(RegisterModel usu)
         {
-            Usuario user = new Usuario();
-            user.IdUsuario = await this.GetMaxIdUsuarioAsync();
-            user.Nombre = nombre;
-            user.Email = email;
-            user.Telefono = telefono;
-            user.IdRol = 1;
-            //CADA USUARIO TENDRA UN SALT DISTINTO
-            user.Salt = HelperCryptography.GenerateSalt();
-            //GUARDAMOS EL PASSWORD EN BYTE[]
-            user.Contrasenia =
-                HelperCryptography.EncryptPassword(password, user.Salt);
-            this.context.Usuarios.Add(user);
-            await this.context.SaveChangesAsync();
+            usu.Usuario.IdUsuario = await GetMaxIdUsuarioAsync();
+            usu.Usuario.IdRol = 1;
+            usu.Usuario.Salt = HelperCryptography.GenerateSalt();
+            usu.Usuario.Contrasenia =
+                    HelperCryptography.EncryptPassword(usu.Password, usu.Usuario.Salt);
+            context.Usuarios.Add(usu.Usuario);
+            await context.SaveChangesAsync();
+            return usu.Usuario;
         }
 
         public async Task<Usuario> LogInUserAsync(string email, string password)

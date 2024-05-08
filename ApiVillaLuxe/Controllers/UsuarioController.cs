@@ -33,9 +33,9 @@ namespace ApiVillaLuxe.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register(string nombre, string email, string password, string telefono, int idRol)
+        public async Task<ActionResult> Register(RegisterModel model)
         {
-            await this.repo.RegisterUser(nombre, email, password, telefono, idRol);
+            await this.repo.RegisterUser(model);
             return Ok("Usuario registrado exitosamente.");
         }
 

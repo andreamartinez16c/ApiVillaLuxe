@@ -278,12 +278,30 @@ namespace ApiVillaLuxe.Repositories
             return await consulta.FirstOrDefaultAsync();
         }
 
+        public async Task<Imagen> FindImagenVillaNombre(string imagen, int idvilla)
+        {
+            var consulta = from datos in this.context.Imagenes
+                           where datos.Imgn == imagen && datos.IdVilla == idvilla
+                           select datos;
+            return await consulta.FirstOrDefaultAsync();
+        }
+
         public async Task DeleteImagenes(int idimagen)
         {
             Imagen imagen = await this.FindImagenVilla(idimagen);
             if (imagen != null)
             {
                 this.context.Imagenes.Remove(imagen);
+                await this.context.SaveChangesAsync();
+            }
+        }
+
+        public async Task DeleteImagenesName(string imagen, int idvilla)
+        {
+            Imagen imagenDelete = await this.FindImagenVillaNombre(imagen, idvilla);
+            if (imagenDelete != null)
+            {
+                this.context.Imagenes.Remove(imagenDelete);
                 await this.context.SaveChangesAsync();
             }
         }
